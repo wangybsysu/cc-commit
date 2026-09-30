@@ -4,14 +4,20 @@
 
 ## 安装
 
+还没发包到 npm，从源码装：
+
 ```bash
-npm install -g cc-commit
+git clone https://github.com/wangybsysu/cc-commit.git
+cd cc-commit
+npm install
+npm run build
+npm link
 ```
 
-或者不装，直接用：
+`npm link` 之后 `cc-commit` 就在 PATH 上了。不想装也行，在仓库目录里直接用 `npm run dev` 跑，参数用 `--` 传过去：
 
 ```bash
-npx cc-commit
+npm run dev -- --apply
 ```
 
 ## 用法
