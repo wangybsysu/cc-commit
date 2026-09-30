@@ -54,4 +54,11 @@ describe("complete", () => {
     const fetchImpl = vi.fn(async () => jsonResponse({ content: [] }));
     await expect(complete({ ...base, fetchImpl })).rejects.toThrow(/空内容/);
   });
+
+  it("网络层失败时错误消息带上目标地址", async () => {
+    const fetchImpl = vi.fn(async () => {
+      throw new TypeError("fetch failed");
+    });
+    await expect(complete({ ...base, fetchImpl })).rejects.toThrow(/relay\.example/);
+  });
 });

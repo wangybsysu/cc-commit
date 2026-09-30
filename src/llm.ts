@@ -16,19 +16,26 @@ export async function complete(opts: ChatOptions): Promise<string> {
   const { apiKey, baseUrl, model, prompt, maxTokens = 512, fetchImpl = fetch } = opts;
 
   const url = `${baseUrl.replace(/\/+$/, "")}/v1/messages`;
-  const res = await fetchImpl(url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: maxTokens,
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetchImpl(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+  } catch (err) {
+    // undici 只会给出 "fetch failed"，不带地址也不带原因，对排查毫无帮助
+    const reason = err instanceof Error ? err.message : String(err);
+    throw new Error(`请求 ${url} 失败：${reason}`);
+  }
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");

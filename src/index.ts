@@ -7,8 +7,18 @@ import { resolveConfig } from "./config.js";
 import { complete } from "./llm.js";
 import { buildPrompt } from "./prompt.js";
 
-export function stagedDiff(): string {
-  return execFileSync("git", ["diff", "--cached"], { encoding: "utf8" });
+export function stagedDiff(cwd?: string): string {
+  try {
+    return execFileSync("git", ["diff", "--cached"], {
+      encoding: "utf8",
+      cwd,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch {
+    // 不接住的话，git 会退回 --no-index 模式并把上百行 usage 打出来，
+    // 外面再叠一层 Node 的未捕获异常 —— 对一个普通的使用失误来说太吵了
+    throw new Error("当前目录不是 git 仓库（或未安装 git），请在仓库里运行。");
+  }
 }
 
 export async function run(argv: string[]): Promise<number> {
@@ -21,14 +31,14 @@ export async function run(argv: string[]): Promise<number> {
   program.parse(argv, { from: "user" });
   const opts = program.opts<{ apply?: boolean; model?: string }>();
 
-  const diff = stagedDiff();
-  if (!diff.trim()) {
-    console.error("没有已暂存的改动（先 git add）。");
-    return 1;
-  }
-
   const config = resolveConfig();
   try {
+    const diff = stagedDiff();
+    if (!diff.trim()) {
+      console.error("没有已暂存的改动（先 git add）。");
+      return 1;
+    }
+
     const message = await complete({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
