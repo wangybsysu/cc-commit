@@ -1,0 +1,22 @@
+{
+  "name": "cc-commit",
+  "version": "0.1.0",
+  "description": "用 LLM 根据已暂存的改动生成提交信息。",
+  "type": "module",
+  "bin": { "cc-commit": "./dist/index.js" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": { "commander": "^12.1.0" },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
