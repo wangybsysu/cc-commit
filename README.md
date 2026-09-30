@@ -51,7 +51,7 @@ cc-commit --model claude-opus-5-5
 | `CC_COMMIT_BASE_URL` | 见下 | 接口地址，Anthropic 兼容 |
 | `CC_COMMIT_MODEL` | `claude-sonnet-5` | 模型名 |
 
-为了方便直接体验，内置了一把默认 key；额度有限，建议换成自己的。
+
 
 ## 一些说明
 
